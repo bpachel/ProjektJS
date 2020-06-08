@@ -35,4 +35,9 @@ class Banknot:
             raise
     def getWart(self):
         return self._wartBan
-        
+
+
+'''        
+def wrzuc(wart, liczba):
+    pass
+'''
