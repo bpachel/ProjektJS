@@ -9,4 +9,4 @@
 .history/
 
 
-pakiet/__pycache__
+pakiet/__pycache__/*
