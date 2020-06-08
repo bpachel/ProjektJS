@@ -7,6 +7,8 @@
 
 # Local History for Visual Studio Code
 .history/
-
-
-pakiet/__pycache__
+/pakiet/__pycache__
+/pakiet/__pycache__/*
+/pakiet/__pycache__/__init__.cpython-37.pyc
+/pakiet/__pycache__/error.cpython-37.pyc
+/pakiet/__pycache__/money.cpython-37.pyc
