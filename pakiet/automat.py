@@ -23,20 +23,22 @@ def parkingTime(wart):
 
 #print(parkingTime(56))
 
-class parkometr():
-    self._aktualnaWartosc = 0.0
-    self._pojemnosc = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+class Parkometr():
+    def __init__(self):
+        self._aktualnaWartosc = 0.0
+        self._pojemnosc = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    #przechowuje monety do zaplaty
-    self._tmp = []
+        #przechowuje monety do zaplaty
+        self._tmp = []
 
-    #przechowuje monety którymi zostało opłacone parkowanie
-    self._schowek = []
+        #przechowuje monety którymi zostało opłacone parkowanie
+        self._schowek = []
 
     def wrzuc(self, nominal, ilosc):
         if(nominal>5.0):
-            self._tmp.append(Banknot(nominal))
-            self._aktualnaWartosc+=nominal
+            for x in range(ilosc):
+                self._tmp.append(Banknot(nominal))
+                self._aktualnaWartosc+=nominal
         else:
             for num, wart in enumerate([0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0], 0):
                 if wart == round(nominal, 2):
@@ -45,12 +47,15 @@ class parkometr():
                             self._tmp.append(Moneta(nominal))
                             self._aktualnaWartosc+=round(nominal, 2)
                         else:
-                            print("Dodano", x, "monet. Limit monet o nominale", round(nominal, 2), "wyczerpany, aby kontynuować wrzuć inny nominał.")
+                            print("Dodano", x-1, "monet. Limit monet o nominale", round(nominal, 2), "wyczerpany, aby kontynuować wrzuć inny nominał.")
                             break
             
 
-    
-    def zatwierdz(self, txt):
+    def getIleWrzucono(self):
+        return round(self._aktualnaWartosc,2)
+    def zatwierdz(self, time, txt):
+        """Funkcja zatwierdza i przekazuje monety do listy 'schowek'. #dodac sprawdzenie tablicy
+        """
         for x in self._tmp:
             if(x.getWart()>5.0):
                 self._schowek.append(x)
@@ -59,11 +64,11 @@ class parkometr():
                     if x.getWart() == wart:
                         self._schowek.append(x)
                         self._pojemnosc[num]+=1
-        
-        czasParkowania = timeAfterPayment(parkingTime(self._aktualnaWartosc))
-        print(czasParkowania)
+        H,M = parkingTime(round(self._aktualnaWartosc,2))
+        czasParkowania = timeAfterPayment(time, H, M)
         self._tmp.clear()
         self._aktualnaWartosc = 0
+        return czasParkowania
 
     def anuluj(self):
         self._tmp.clear()
