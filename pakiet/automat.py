@@ -1,6 +1,7 @@
 from pakiet.czas import timeAfterPayment
 from pakiet.money import Banknot
 from pakiet.money import Moneta
+import pakiet.error as err
 
 def parkingTime(wart):
     if(wart<2.0):
@@ -53,9 +54,22 @@ class Parkometr():
 
     def getIleWrzucono(self):
         return round(self._aktualnaWartosc,2)
-    def zatwierdz(self, time, txt):
+    def zatwierdz(self, time, numRejestr):
         """Funkcja zatwierdza i przekazuje monety do listy 'schowek'. #dodac sprawdzenie tablicy
         """
+        try:
+            if self._aktualnaWartosc == 0.0:
+                raise err.BrakMonetExeption()
+            elif(not (numRejestr.isalnum()) or not len(numRejestr)>0):
+                raise err.ZlyNumerRejestracyjnyException()
+        except err.BrakMonetExeption as e:
+            print(e)
+            raise
+        except err.ZlyNumerRejestracyjnyException as e:
+            print(e)
+            raise
+        
+        numRejestr = numRejestr.upper()
         for x in self._tmp:
             if(x.getWart()>5.0):
                 self._schowek.append(x)
@@ -68,7 +82,7 @@ class Parkometr():
         czasParkowania = timeAfterPayment(time, H, M)
         self._tmp.clear()
         self._aktualnaWartosc = 0
-        return czasParkowania
+        return str(czasParkowania+"\nDla auta o numerze rejestracynym " + numRejestr + " na czas " + str(H) +" godzin i " + str(M) + " minut.")
 
     def anuluj(self):
         self._tmp.clear()

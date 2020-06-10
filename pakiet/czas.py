@@ -1,7 +1,19 @@
-'''Funkcje oraz klasy do obsługi czasu
-'''
 from datetime import datetime
 from datetime import timedelta
+
+"""Funkcje oraz klasy do obsługi czasu
+"""
+
+def changeTime(H, M):
+    """Funkcja służy do zmiany godziny
+    """
+    now = datetime.now()
+    delta = timedelta(
+        minutes = M,
+        hours=H
+    )
+    return now+delta
+
 
 def getTime(now):
     '''Funkcja getTime zmienia czas na bardziej czytelniejszą wersje.
@@ -23,11 +35,12 @@ def timeAfterPayment(time, H, M):
     do jakiej daty i godziny możemy mieć zaparkowane auto.
     '''
     timeArray = getTimeArray(time)
-    if(timeArray[5]+M>=60):
-        H+=1
-        M=(timeArray[5]+M)-60-timeArray[5]
+
     #gdy aktualny czas miesci się w czasie pracy parkomatu
     if (timeArray[4] >= 8 and timeArray[4] < 20):
+        if(timeArray[5]+M>=60):
+            H+=1
+            M=(timeArray[5]+M)-60-timeArray[5]
         #dostosowanie ilości dni
         D=H//12
         H-=D*12
@@ -45,6 +58,7 @@ def timeAfterPayment(time, H, M):
                 D+=2
     #gdy aktualny czas NIE miesci się w czasie pracy parkomatu
     elif (timeArray[4] >= 20):
+        M=M-timeArray[5]
         #dostosowanie ilości dni
         D=H//12
         H-=D*12
@@ -58,6 +72,7 @@ def timeAfterPayment(time, H, M):
         if((timeArray[0]+D)%7==6):
             D+=2
     elif(timeArray[4] < 8):
+        M=M-timeArray[5]
         #dostosowanie ilości dni
         D=H//12
         H-=D*12
