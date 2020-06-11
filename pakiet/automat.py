@@ -27,6 +27,7 @@ def parkingTime(wart):
 class Parkometr():
     def __init__(self):
         self._aktualnaWartosc = 0.0
+        #do tej listy można uśyć list comprehension
         self._pojemnosc = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         #przechowuje monety do zaplaty
@@ -41,6 +42,7 @@ class Parkometr():
                 self._tmp.append(Banknot(nominal))
                 self._aktualnaWartosc+=nominal
         else:
+            #do tej listy można uśyć list comprehension
             for num, wart in enumerate([0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0], 0):
                 if wart == round(nominal, 2):
                     for x in range(ilosc):

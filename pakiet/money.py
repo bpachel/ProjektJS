@@ -1,5 +1,5 @@
 import pakiet.error as err
-
+#TU MUSZE ZROBIC DZIEDZICZENIE WRAZ Z NADPISANIEM
 class Moneta:
     """klasa Moneta
     """

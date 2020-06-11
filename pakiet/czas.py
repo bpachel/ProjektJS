@@ -3,7 +3,8 @@ from datetime import timedelta
 
 """Funkcje oraz klasy do obsługi czasu
 """
-
+##################################MOŻNA ZROBIĆ Z TEGO KLASE##############################################################
+#TU MOŻE DAM LAMBDA
 def changeTime(H, M):
     """Funkcja służy do zmiany godziny
     """
@@ -14,7 +15,7 @@ def changeTime(H, M):
     )
     return now+delta
 
-
+#TU MOŻE DAM LAMBDA
 def getTime(now):
     '''Funkcja getTime zmienia czas na bardziej czytelniejszą wersje.
     '''
