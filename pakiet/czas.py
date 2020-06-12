@@ -68,12 +68,15 @@ def timeAfterPayment(time, H, M):
         #dostosowanie ilości godzin
         tmp = timeArray[4]-8
         H=-1*(tmp-H)
-        if((timeArray[0]+D)%7==0):
+        if(timeArray[0]==0):
             D+=1
-        if((timeArray[0]+D)%7==6):
+        elif(timeArray[0]==6):
+            D+=2
+        elif((timeArray[0]+D)%7==0):
+            D+=1
+        elif((timeArray[0]+D)%7==6):
             D+=2
     elif(timeArray[4] < 8):
-        M=M-timeArray[5]
         #dostosowanie ilości dni
         D=H//12
         H-=D*12
@@ -81,10 +84,17 @@ def timeAfterPayment(time, H, M):
         #dostosowanie ilości godzin
         tmp = 8-timeArray[4]
         H+=tmp
-        if((timeArray[0]+D)%7==0):
+        if(timeArray[0]==0):
             D+=1
-        if((timeArray[0]+D)%7==6):
+        elif(timeArray[0]==6):
             D+=2
+        elif((timeArray[0]+D)%7==0):
+            D+=1
+        elif((timeArray[0]+D)%7==6):
+            D+=2
+        M=M-timeArray[5]
+        
+        
 
     #zmienna która jest dodawana do aktualnego czasu
     delta = timedelta(
