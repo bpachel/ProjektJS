@@ -4,6 +4,8 @@ from pakiet.money import Moneta
 import pakiet.error as err
 
 def parkingTime(wart):
+    """Funkcja obliczająca czas zaparkowania
+    """
     if(wart<2.0):
         H=0
         M=int(60*(wart/2.0))
@@ -24,7 +26,9 @@ def parkingTime(wart):
 
 #print(parkingTime(56))
 
-class Parkometr():
+class Parkomat():
+    """Klasa służąca do osługi takich funkcji jak wrzuć, zatwierdz oraz anuluj.
+    """
     def __init__(self):
         self._aktualnaWartosc = 0.0
         #do tej listy można uśyć list comprehension
@@ -36,7 +40,10 @@ class Parkometr():
         #przechowuje monety którymi zostało opłacone parkowanie
         self._schowek = []
 
-    def wrzuc(self, nominal, ilosc):
+    def wrzuc(self, time, nominal, ilosc):
+        """Funkcja ta pozwala na wrzucenie określonej ilości monet,
+        o zadanym nominale.
+        """
         if(nominal>5.0):
             for x in range(ilosc):
                 self._tmp.append(Banknot(nominal))
@@ -52,10 +59,17 @@ class Parkometr():
                         else:
                             print("Dodano", x-1, "monet. Limit monet o nominale", round(nominal, 2), "wyczerpany, aby kontynuować wrzuć inny nominał.")
                             break
+        H,M = parkingTime(round(self._aktualnaWartosc,2))
+        czasParkowania = timeAfterPayment(time, H, M)
+        return str("Parking do " + czasParkowania)
             
 
     def getIleWrzucono(self):
+        """Funkcja zwraca wartość monet wrzuconych
+        zaokrągloną do dwóch miejsc po przecinku
+        """
         return round(self._aktualnaWartosc,2)
+
     def zatwierdz(self, time, numRejestr):
         """Funkcja zatwierdza i przekazuje monety do listy 'schowek'. #dodac sprawdzenie tablicy
         """
@@ -84,16 +98,10 @@ class Parkometr():
         czasParkowania = timeAfterPayment(time, H, M)
         self._tmp.clear()
         self._aktualnaWartosc = 0
-        return str(czasParkowania+"\nDla auta o numerze rejestracynym " + numRejestr + " na czas " + str(H) +" godzin i " + str(M) + " minut.")
+        return str("Zapłacono do " + czasParkowania + "dla Auta o numerze rejestracyjnym" + numRejetr)
 
     def anuluj(self):
+        """Funkcja czyści zmienne
+        """
         self._tmp.clear()
         self._aktualnaWartosc = 0
-
-"""Funkcje oraz klasy do obsługi automatu
-Automat powinien być czyms w rodzaju skarbonki
-o maksymalnej pojemności 200 z każdego nominału
-
-Dodatkowo możliwość wrzucania monet pradopodobnie tutaj
-
-"""

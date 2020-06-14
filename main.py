@@ -1,27 +1,40 @@
 from tkinter import *
 from pakiet.money import Banknot
 from pakiet.money import Moneta
-from pakiet.automat import Parkometr
+from pakiet.automat import Parkomat
+import pakiet.error as err
 import pakiet.czas as czas
 from datetime import datetime
-parkometr = Parkometr()
 
+
+parkomat = Parkomat()
 window = Tk()
+
 var = DoubleVar()
 var.set(0.01)
 dane = StringVar()
-opis = Label(window, text="Wrzuć pieniądze:",bg="black", fg="white", font="none 12 bold")
-wartosc = Label(window, textvariable=var,bg="black", fg="white", font="none 12 bold")
-wynik = Label(window, textvariable=dane,bg="black", fg="white", font="none 12 bold")
+now = datetime.now()
 
-ilosc = Entry(window, width=5, bg="white")
-poleTablicy = Entry(window, width=5, bg="white")
+opis1 = Label(window, text="Numer rejestracyjny:",bg="#A6CEE9", fg="black", font="none 12 bold", width=30)
+opis2 = Label(window, text="Nominał:",bg="#A6CEE9", fg="black", font="none 12 bold", width=30)
+opis3 = Label(window, text="Ilość:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+godzina = Label(window, text="Minuta:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+minuta = Label(window, text="Godzina:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+wartosc = Label(window, textvariable=var,bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+wynik = Label(window, textvariable=dane,bg="#A3C5DB", width=60, fg="black", font="none 12 bold")
 
-buttonUp = Button(window, text="up")
-buttonDown = Button(window, text="down")
-buttonInsert = Button(window, text="wrzuc")
-buttonAccept = Button(window, text="accept")
-buttonCancel = Button(window, text="cancel")
+ilosc = Entry(window, bg="white", width=15)
+poleTablicy = Entry(window, bg="white", width=30)
+
+buttonUpH = Button(window, text="+", command= lambda: globals().update(now=czas.changeTime(now, 1, 0)))
+buttonUpM = Button(window, text="+", command= lambda: globals().update(now=czas.changeTime(now, 0, 1)))
+buttonDownH = Button(window, text="-", command= lambda: globals().update(now=czas.changeTime(now, -1, 0)))
+buttonDownM = Button(window, text="-", command= lambda: globals().update(now=czas.changeTime(now, 0, -1)))
+buttonUp = Button(window, text="+")
+buttonDown = Button(window, text="-")
+buttonInsert = Button(window, text="wrzuc", width=15)
+buttonAccept = Button(window, text="Zatwierdz", width=30)
+buttonCancel = Button(window, text="Anuluj", width=30)
 
 def up(event):
     pieniadz=var.get()
@@ -47,24 +60,43 @@ def down(event):
     window.update()
     print(pieniadz)
 
+
+
 def wrzuc(event):
-    ileMonet = int(ilosc.get())
+    global now
+    try:
+        if (ilosc.get()==""):
+            raise err.BrakMonetExeption()
+    except err.BrakMonetExeption as e:
+        print(e)
+        raise
+    else:
+        ileMonet = int(ilosc.get())
     pieniadz = var.get()
-    print(pieniadz, "x", ileMonet)
-    parkometr.wrzuc(pieniadz, ileMonet)
-    print(parkometr.getIleWrzucono())
+    #print(pieniadz, "x", ileMonet)
+    dane.set("Aktualna godzina: " + czas.getTime(now) + "\n" + parkometr.wrzuc(pieniadz,now, ileMonet)
+    #print(parkometr.getIleWrzucono())
 
 def zatwierdz(event):
+    global now
     tabRej = poleTablicy.get()
-    now = datetime.now()
-    dane.set(parkometr.zatwierdz(now,tabRej))
+    dane.set(parkomat.zatwierdz(now,tabRej))
     window.update()
 
 def anuluj(event):
-    parkometr.anuluj()
-    dane.set("")
+    parkomat.anuluj()
+    dane.set("Transakcja anulowana...")
     window.update()
 
+def aktualizuj(event):
+    dane.set("Aktualna godzina: " + czas.getTime(now) + "\n Cos tam cos tam")
+
+def wyswietl():
+    global now
+    tekst = dane.get()
+    txt = tekst.split("\n")
+    dane.set("Aktualna godzina: " + czas.getTime(now) + txt[1])
+    window.after(1000, wyswietl)
 
 
             
@@ -91,8 +123,8 @@ print(parkometr.zatwierdz(now, "JAK678DS"))
 #Muszą się zerować minuty!!!! 
 """
 
-window.title("Parkometr 2020")
-window.configure(background="black")
+window.title("Bartlomiej Pachel 130561")
+window.configure(background="#A6CEE9")
 #Label(window, text="Wrzuć pieniądze:",bg="black", fg="white", font="none 12 bold").grid(row=0,column=1,sticky=W)
 
 #tekst=Entry(window, width=20, bg="white")
@@ -104,16 +136,29 @@ buttonDown.bind("<Button-1>", down)
 buttonInsert.bind("<Button-1>", wrzuc)
 buttonAccept.bind("<Button-1>", zatwierdz)
 buttonCancel.bind("<Button-1>", anuluj)
+buttonUpH.bind("<Button-1>", aktualizuj)
+buttonUpM.bind("<Button-1>", aktualizuj)
+buttonDownH.bind("<Button-1>", aktualizuj)
+buttonDownM.bind("<Button-1>", aktualizuj)
 
-opis.grid(row=0, column=0, sticky=W, columnspan=2)
-wartosc.grid(row=2, column=0, sticky=N)
-ilosc.grid(row=2, column=1, sticky=N)
-buttonUp.grid(row=1, column=0, sticky=N)
-buttonDown.grid(row=3, column=0, sticky=N)
-buttonInsert.grid(row=4, column=0, sticky=N, columnspan=2)
-poleTablicy.grid(row=5, column=0, sticky=N, columnspan=2)
-buttonCancel.grid(row=6, column=0, sticky=N)
-buttonAccept.grid(row=6, column=1, sticky=N)
-wynik.grid(row=7, column=0, sticky=N, columnspan=2)
+wynik.grid(row=0, column=0, columnspan=4, rowspan=2)
+godzina.grid(row=2, column=0, rowspan=2)
+buttonUpH.grid(row=2, column=1)
+buttonUpM.grid(row=2, column=3)
+buttonDownH.grid(row=3, column=1)
+buttonDownM.grid(row=3, column=3)
+minuta.grid(row=2, column=2, rowspan=2)
+opis1.grid(row=4, column=0, columnspan=2)
+poleTablicy.grid(row=4, column=2, columnspan=2)
+buttonUp.grid(row=5, column=2)
+opis2.grid(row=6, column=0, columnspan=2)
+wartosc.grid(row=6, column=2)
+buttonDown.grid(row=7, column=2)
+opis3.grid(row=8, column=0, columnspan=2)
+ilosc.grid(row=8, column=2)
+buttonInsert.grid(row=8, column=3)
+buttonCancel.grid(row=9, column=0, columnspan=2)
+buttonAccept.grid(row=9, column=2, columnspan=2)
 
+wyswietl()
 window.mainloop()

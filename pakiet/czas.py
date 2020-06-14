@@ -5,16 +5,15 @@ from datetime import timedelta
 """
 ##################################MOŻNA ZROBIĆ Z TEGO KLASE##############################################################
 #TU MOŻE DAM LAMBDA
-def changeTime(H, M):
+def changeTime(time, H, M):
     """Funkcja służy do zmiany godziny
     """
-    now = datetime.now()
     delta = timedelta(
         minutes = M,
         hours=H
     )
-    return now+delta
-
+    x = lambda t,change: t+change
+    return x(time,delta)
 #TU MOŻE DAM LAMBDA
 def getTime(now):
     '''Funkcja getTime zmienia czas na bardziej czytelniejszą wersje.
