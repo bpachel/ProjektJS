@@ -1,12 +1,29 @@
 import pakiet.error as err
-#TU MUSZE ZROBIC DZIEDZICZENIE WRAZ Z NADPISANIEM
-class Moneta:
-    """klasa Moneta
+class Pieniadz():
+    """klasa Pieniadz
     """
     def __init__(self, wartosc):
-        self._wartMon = int(wartosc*100)
+        self._wartPien = wartosc
         try:
-            for w in [1, 2, 5, 10, 20, 50, 100, 200, 500]:
+            for w in [(10**x)*y for x in range(4) for y in [0.01, 0.02, 0.05]]:
+                if self._wartPien == w:
+                    break
+            else:
+                raise err.ZlaWartoscNominalu(self._wartPien)
+                self._wart=0.00
+        except err.ZlaWartoscNominalu as e:
+            print(e)
+            raise
+    def getWart(self):
+        return round(self._wartPien, 2)
+
+class Moneta(Pieniadz):
+    """klasa Moneta dziedziczącza po klasie Pieniadz
+    """
+    def __init__(self, wartosc):
+        self._wartMon = wartosc
+        try:
+            for w in [(10**x)*y for x in range(3) for y in [0.01, 0.02, 0.05]]:
                 if self._wartMon == w:
                     break
             else:
@@ -15,11 +32,9 @@ class Moneta:
         except err.ZlaWartoscNominalu as e:
             print(e)
             raise
-    def getWart(self):
-        return round(self._wartMon/100, 2)
 
-class Banknot:
-    """klasa Banknot
+class Banknot(Pieniadz):
+    """klasa Banknot dziedziczącza po klasie Pieniadz
     """
     def __init__(self, wartosc):
         self._wartBan = int(wartosc)
@@ -33,11 +48,3 @@ class Banknot:
         except err.ZlaWartoscNominalu as e:
             print(e)
             raise
-    def getWart(self):
-        return self._wartBan
-
-
-'''        
-def wrzuc(wart, liczba):
-    pass
-'''

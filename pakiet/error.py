@@ -1,4 +1,6 @@
 class Error(Exception):
+    """Klasa nadrzędna wyjątków
+    """
     pass
 
 class ZlaWartoscNominalu(Error):
@@ -22,4 +24,4 @@ class ZlyNumerRejestracyjnyException(Error):
     nie podania numeru rejestracyjnego.
     """
     def __str__(self):
-        return str("Brak podanego numeru rejestracyjnego!")
+        return str("Brak podanego prawidłowego numeru rejestracyjnego!")

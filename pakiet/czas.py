@@ -1,10 +1,7 @@
 from datetime import datetime
 from datetime import timedelta
 
-"""Funkcje oraz klasy do obsługi czasu
-"""
-##################################MOŻNA ZROBIĆ Z TEGO KLASE##############################################################
-#TU MOŻE DAM LAMBDA
+licz = lambda a, b: a+b
 def changeTime(time, H, M):
     """Funkcja służy do zmiany godziny
     """
@@ -12,8 +9,7 @@ def changeTime(time, H, M):
         minutes = M,
         hours=H
     )
-    x = lambda t,change: t+change
-    return x(time,delta)
+    return licz(time,delta)
 #TU MOŻE DAM LAMBDA
 def getTime(now):
     '''Funkcja getTime zmienia czas na bardziej czytelniejszą wersje.
@@ -35,27 +31,48 @@ def timeAfterPayment(time, H, M):
     do jakiej daty i godziny możemy mieć zaparkowane auto.
     '''
     timeArray = getTimeArray(time)
-
+    print(timeArray[0])
     #gdy aktualny czas miesci się w czasie pracy parkomatu
     if (timeArray[4] >= 8 and timeArray[4] < 20):
-        if(timeArray[5]+M>=60):
-            H+=1
-            M=(timeArray[5]+M)-60-timeArray[5]
-        #dostosowanie ilości dni
-        D=H//12
-        H-=D*12
-        if(timeArray[4]+H>=20):
-            #zwiększenie o 1 liczbę dni gdyż czas po zapłacie przekracza godzinę 20
-            D+=1
-
-            #dostosowanie ilości godzin
-            H=-1*(timeArray[4]-((timeArray[4]+H-20)+8))
+        D=0
+        if(timeArray[0]==0 or timeArray[0]==6):
+            if timeArray[0]==0:
+                D+=1
+            if timeArray[0]==6:
+                D+=2
+            if(M>=60):
+                H+=M//60
+                M=M%60
+            D+=H//12
+            H=H%12
+            M=M-timeArray[5]
+            H=H-timeArray[4]+8
 
             #kwestia wolnych dni tygodnia
             if((timeArray[0]+D)%7==0):
                 D+=1
-            if((timeArray[0]+D)%7==6):
+            elif((timeArray[0]+D)%7==6):
                 D+=2
+
+        else:
+            if(M+timeArray[5]>=60):
+                H+=(M+timeArray[5])//60
+                M=(M+timeArray[5])%60-timeArray[5]
+            D+=H//12
+            H=H%12
+            if(timeArray[4]+H>=20):
+                #zwiększenie o 1 liczbę dni gdyż czas po zapłacie przekracza godzinę 20
+                D+=1
+
+                #dostosowanie ilości godzin
+                H=-1*(timeArray[4]-((timeArray[4]+H-20)+8))
+
+            #kwestia wolnych dni tygodnia
+            if((timeArray[0]+D)%7==0):
+                D+=1
+            elif((timeArray[0]+D)%7==6):
+                D+=2
+
     #gdy aktualny czas NIE miesci się w czasie pracy parkomatu
     elif (timeArray[4] >= 20):
         M=M-timeArray[5]
@@ -93,14 +110,11 @@ def timeAfterPayment(time, H, M):
             D+=2
         M=M-timeArray[5]
         
-        
-
     #zmienna która jest dodawana do aktualnego czasu
     delta = timedelta(
         days=D,
         minutes = M,
         hours=H
     )
-    time = time + delta
-    return getTime(time)
+    return getTime(licz(time,delta))
 

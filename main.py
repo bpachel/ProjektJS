@@ -6,7 +6,6 @@ import pakiet.error as err
 import pakiet.czas as czas
 from datetime import datetime
 
-
 parkomat = Parkomat()
 window = Tk()
 
@@ -14,22 +13,25 @@ var = DoubleVar()
 var.set(0.01)
 dane = StringVar()
 now = datetime.now()
+H = 0
+M = 0
+dane.set("Aktualna godzina: " + czas.getTime(now)+ "\n ")
 
 opis1 = Label(window, text="Numer rejestracyjny:",bg="#A6CEE9", fg="black", font="none 12 bold", width=30)
 opis2 = Label(window, text="Nominał:",bg="#A6CEE9", fg="black", font="none 12 bold", width=30)
 opis3 = Label(window, text="Ilość:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
-godzina = Label(window, text="Minuta:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
-minuta = Label(window, text="Godzina:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+godzina = Label(window, text="Godzina:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
+minuta = Label(window, text="Minuta:",bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
 wartosc = Label(window, textvariable=var,bg="#A6CEE9", fg="black", font="none 12 bold", width=15)
 wynik = Label(window, textvariable=dane,bg="#A3C5DB", width=60, fg="black", font="none 12 bold")
 
 ilosc = Entry(window, bg="white", width=15)
 poleTablicy = Entry(window, bg="white", width=30)
 
-buttonUpH = Button(window, text="+", command= lambda: globals().update(now=czas.changeTime(now, 1, 0)))
-buttonUpM = Button(window, text="+", command= lambda: globals().update(now=czas.changeTime(now, 0, 1)))
-buttonDownH = Button(window, text="-", command= lambda: globals().update(now=czas.changeTime(now, -1, 0)))
-buttonDownM = Button(window, text="-", command= lambda: globals().update(now=czas.changeTime(now, 0, -1)))
+buttonUpH = Button(window, text="+", command= lambda: globals().update(H=H+1))
+buttonUpM = Button(window, text="+", command= lambda: globals().update(M=M+1))
+buttonDownH = Button(window, text="-", command= lambda: globals().update(H=H-1))
+buttonDownM = Button(window, text="-", command= lambda: globals().update(M=M-1))
 buttonUp = Button(window, text="+")
 buttonDown = Button(window, text="-")
 buttonInsert = Button(window, text="wrzuc", width=15)
@@ -46,7 +48,6 @@ def up(event):
             pieniadz=lista[x+1]
     var.set(pieniadz)
     window.update()
-    print(pieniadz)
             
 def down(event):
     pieniadz=var.get()
@@ -58,88 +59,53 @@ def down(event):
             pieniadz=lista[x-1]
     var.set(pieniadz)
     window.update()
-    print(pieniadz)
-
-
 
 def wrzuc(event):
     global now
     try:
-        if (ilosc.get()==""):
+        if (ilosc.get()=="" or ilosc.get()=="0"):
             raise err.BrakMonetExeption()
     except err.BrakMonetExeption as e:
         print(e)
+        dane.set("Aktualna godzina: " + czas.getTime(now) +"\nBrak wrzuconych monet!!")
         raise
     else:
         ileMonet = int(ilosc.get())
     pieniadz = var.get()
-    #print(pieniadz, "x", ileMonet)
-    dane.set("Aktualna godzina: " + czas.getTime(now) + "\n" + parkometr.wrzuc(pieniadz,now, ileMonet)
-    #print(parkometr.getIleWrzucono())
+    dane.set("Aktualna godzina: " + czas.getTime(now) +"\n" + parkomat.wrzuc(now, pieniadz, ileMonet))
 
 def zatwierdz(event):
     global now
     tabRej = poleTablicy.get()
-    dane.set(parkomat.zatwierdz(now,tabRej))
+    dane.set("Aktualna godzina: " + czas.getTime(now) +"\n" + parkomat.zatwierdz(now,tabRej))
     window.update()
+    window.after(5000, czysc)
 
 def anuluj(event):
     parkomat.anuluj()
-    dane.set("Transakcja anulowana...")
+    dane.set("Aktualna godzina: " + czas.getTime(now) +"\nTransakcja anulowana...")
     window.update()
+    window.after(5000, czysc)
 
-def aktualizuj(event):
-    dane.set("Aktualna godzina: " + czas.getTime(now) + "\n Cos tam cos tam")
+def czysc():
+    dane.set("Aktualna godzina: " + czas.getTime(now) +"\n ")
 
 def wyswietl():
     global now
+    now = czas.changeTime(datetime.now(), H, M)
     tekst = dane.get()
     txt = tekst.split("\n")
-    dane.set("Aktualna godzina: " + czas.getTime(now) + txt[1])
-    window.after(1000, wyswietl)
-
-
-            
-#WYKOMBINOWAĆ GDZIE DAĆ WYRAŻENIA LAMBDA
-'''
-przetestować w godzinach między 8 a 20, oraz miedzy 20 a 24
-now = datetime.now()
-print(czas.timeAfterPayment(now, 9, 12))
-'''
-"""
-now = datetime.now()
-#now = czas.changeTime(9, 10)
-parkometr = Parkometr()
-#wrzuc(self, nominal, ilosc)
-parkometr.wrzuc(0.01, 150)
-parkometr.wrzuc(0.02, 150)
-parkometr.wrzuc(0.05, 30)
-parkometr.wrzuc(20, 1)
-parkometr.anuluj()
-parkometr.wrzuc(0.01, 200)
-#print(parkometr.getIleWrzucono())
-print(parkometr.zatwierdz(now, "JAK678DS"))
-
-#Muszą się zerować minuty!!!! 
-"""
+    dane.set("Aktualna godzina: " + czas.getTime(now) +"\n" + txt[1])
+    window.after(100, wyswietl)
 
 window.title("Bartlomiej Pachel 130561")
 window.configure(background="#A6CEE9")
-#Label(window, text="Wrzuć pieniądze:",bg="black", fg="white", font="none 12 bold").grid(row=0,column=1,sticky=W)
-
-#tekst=Entry(window, width=20, bg="white")
-#tekst.grid(row=2, column=1, sticky=W)
-
 
 buttonUp.bind("<Button-1>", up)
 buttonDown.bind("<Button-1>", down)
 buttonInsert.bind("<Button-1>", wrzuc)
 buttonAccept.bind("<Button-1>", zatwierdz)
 buttonCancel.bind("<Button-1>", anuluj)
-buttonUpH.bind("<Button-1>", aktualizuj)
-buttonUpM.bind("<Button-1>", aktualizuj)
-buttonDownH.bind("<Button-1>", aktualizuj)
-buttonDownM.bind("<Button-1>", aktualizuj)
 
 wynik.grid(row=0, column=0, columnspan=4, rowspan=2)
 godzina.grid(row=2, column=0, rowspan=2)
